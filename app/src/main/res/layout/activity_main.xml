@@ -22,10 +22,12 @@
 		    <ImageView
 		        android:id="@+id/sharedImageView"
 		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:src="@drawable/ic_launcher"
-		        android:contentDescription="@string/imgdesc" />
+		        android:layout_height="400dp"
+		        android:src="@drawable/chenshrugops"
+		        android:contentDescription="@string/imgdesc"
+                android:layout_weight="150" />
 	    </LinearLayout>
+        <!--Fix Layout Height plz -->
 	    
     </ScrollView>
 	    

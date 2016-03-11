@@ -14,6 +14,7 @@ import android.os.ParcelFileDescriptor;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -27,6 +28,7 @@ public class MainActivity extends Activity {
 	private Button copyButton;
 	private Uri imageUri;
 	private static final int CHOOSE_HOST = 1;
+    private String mimeType;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,14 +41,19 @@ public class MainActivity extends Activity {
 		copyButton = (Button) findViewById(R.id.copyButton);
 		Intent intent = getIntent();
 		imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
+        mimeType = intent.getType();
 	}
+
 
 	private void displayAndUpload(Host host) {
 		ContentResolver cr = getContentResolver();
 		if (imageUri != null) {
 			ImageView view = (ImageView)findViewById(R.id.sharedImageView);
-			view.setImageURI(imageUri);
-
+			if(mimeType.equals("image/*")) {
+                view.setImageURI(imageUri);
+            }else {
+                view.setImageDrawable(getResources().getDrawable(R.drawable.chenshrugops));
+            }
 			ParcelFileDescriptor inputPFD = null; 
 			try {
 				inputPFD = cr.openFileDescriptor(imageUri, "r");				
@@ -56,7 +63,13 @@ public class MainActivity extends Activity {
 				toast.show();				
 			}
 
-			new Uploader(this, inputPFD, host).execute(imageUri.getLastPathSegment(), cr.getType(imageUri));
+            if(mimeType.equals("image/*")) {
+                new Uploader(this, inputPFD, host, true).execute(imageUri.getLastPathSegment(), cr.getType(imageUri));
+            }else {
+                new Uploader(this, inputPFD, host, false).execute(imageUri.getLastPathSegment(), cr.getType(imageUri));
+            }
+
+
 		}
 	}
 	

@@ -21,12 +21,14 @@ public class Uploader extends AsyncTask<String, Integer, String>{
 	private ParcelFileDescriptor file;
 	private MainActivity source;
 	private Host host;
+    private Boolean isImage;
 
 
-	public Uploader(MainActivity sender, ParcelFileDescriptor pfd, Host host) {
+	public Uploader(MainActivity sender, ParcelFileDescriptor pfd, Host host, Boolean isImage) {
 		this.source = sender;
 		this.file = pfd;
 		this.host = host;
+        this.isImage = isImage;
 	}
 
 	@Override
@@ -53,8 +55,13 @@ public class Uploader extends AsyncTask<String, Integer, String>{
 
 		    DataOutputStream out = new DataOutputStream(conn.getOutputStream());
 		    out.writeBytes("--" + boundary + "\r\n");
-		    out.writeBytes(String.format("Content-Disposition: form-data; name=\"%s\";filename=\"%s.%s\"\r\nContent-type: %s\r\n",
-		    		fieldName, filename, extension, contentType));
+
+            if (isImage && extension!=null){out.writeBytes(String.format("Content-Disposition: form-data; name=\"%s\";filename=\"%s.%s\"\r\nContent-type: %s\r\n",
+                    fieldName, filename, extension, contentType));
+            } else {
+                out.writeBytes(String.format("Content-Disposition: form-data; name=\"%s\";filename=\"%s\"\r\nContent-type: %s\r\n",
+                        fieldName, filename, contentType));
+            }
 		    out.writeBytes("\r\n");
 		    
 		    Log.d(tag, filename + "." + extension);
